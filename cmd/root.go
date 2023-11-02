@@ -41,18 +41,33 @@ func Execute() {
 	}
 }
 
+func setDefaults() {
+	viper.SetDefault("port", "8080")
+
+}
+
 func init() {
+
+	setDefaults()
+
+	err := viper.WriteConfigAs("toolbox-backup.yml")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+
 	cobra.OnInitialize(initConfig)
 
 	// add sub command pallete
 	rootCmd.AddCommand(info.InfoCmd)
 	rootCmd.AddCommand(net.NetCmd)
 
+
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.toolbox-cli.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.toolbox.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -72,7 +87,7 @@ func initConfig() {
 		// Search config in home directory with name ".toolbox-cli" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".toolbox-cli")
+		viper.SetConfigName(".toolbox")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
